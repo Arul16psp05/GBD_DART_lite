@@ -1,0 +1,40 @@
+SYSTEMS:
+    OBSERVATION: vela@172.17.20.222
+    DESTINATION: dsp@172.17.20.210
+    user: $USER
+    
+OBSERVATION_SYS_PATH:  
+    SOURCE: $HOME/Ramdisk_10GB
+    TEMPSOURCE: $HOME/Ramdisk_20GB
+    TRANSIENTBUF: $HOME/Ramdisk_70GB
+    SCRIPTS_DIR: $HOME/pdr_observation_vela
+    
+DESTINATION_SYS_PATH:    
+    Remote_TRANSIENTBUF: /data/TRANSIENT_BUFFER
+
+GULP:
+    ETHERNET_name: eth0
+    ACQ_file_prefix: PDR_GULP_data
+    GULP_script: $SCRIPTS_DIR/gulp_continues_acquire_data_04_09_2024.sh
+    
+RSYNC_PDR_data:
+    BOOKEEP: $HOME/BOOKEEP
+    rsync_script: $SCRIPTS_DIR/rsync_PDR_data_from_Ramdisk_with_echo_allX_with_Pink_Block_04_09_2024.sh
+
+PINK_block:    
+    #NUM_FILES_TX: 120
+    TRIGGER: $BOOKEEP/Trigger.txt
+    
+DATA_reduction:
+    Multithread_spawn_script: $SCRIPTS_DIR/pcap_raw2HDF5_data_reduction_spawn_04_09_2024.py
+    Multithread_script: $SCRIPTS_DIR/pdr_pcap_file_to_HDF5_allXPA_multithreding_04_09_2024.py 
+    rf_path_phase: $SCRIPTS_DIR/rf_path_phase.dat
+    Archive_dir_HDF5: /media/vela/GBD_HDF5ARCHIVE
+    
+Transient_buffer_manager:
+    Tran_Buf_Mgr_script: $SCRIPTS_DIR/transient_buffer_manager1_Pink_Block_11_05_2025_long_Tx_Nbuf.sh
+    NFILES2KEEP_in_BUFF: 10
+    TEST_FOR_FILE: $SCRIPTS_DIR/testForFile_04_09_2024.sh
+    
+#WATCH:
+#    WATCH_CMD: watch -n 1 "echo $SOURCE; ls -ltrh $SOURCE; echo $TEMPSOURCE; ls -ltrh $TEMPSOURCE; echo $TRANSIENTBUF; ls -ltrh $TRANSIENTBUF"

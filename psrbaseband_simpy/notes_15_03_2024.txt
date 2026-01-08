@@ -1,0 +1,32 @@
+Edited by Arul
+
+
+
+dspsr test_B1929+10.dat -F 64[:D] -e .fits -L 1 -AO B1929+10_fits
+
+psrplot -p freq B1929+10_fits.fits -D /xs
+
+psrplot -p time B1929+10_fits.fits -D /xs
+
+psrplot -p freq+ -jTD B1929+10_fits.fits -D /xs
+
+
+
+dspsr B1929+10.dat -F 256[:D] -e .fits -L 0.5 -AO B1929+10
+
+pam -d 0.0 -m B1929+10.fits
+
+psrplot -p freq B1929+10.fits -D /xs
+
+psrplot -p time B1929+10.fits -D /xs
+
+psrplot -p freq+ -jTD B1929+10.fits -D /xs
+
+
+pdmp -ds 0.5 -g B1929+10.ps/cps B1929+10.fits
+
+pdmp -ds 0.1 -g B1929+10.fits.pazi.ps/cps B1929+10.fits.pazi
+
+ps2pdf B1929+10.fits.pazi.ps
+
+evince B1929+10.fits.pazi.pdf

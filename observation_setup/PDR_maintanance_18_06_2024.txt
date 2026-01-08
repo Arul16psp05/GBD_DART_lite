@@ -1,0 +1,80 @@
+# Install g++4.8
+# https://askubuntu.com/questions/1450426/need-gcc-and-g-4-8-in-ubuntu-22-04-1
+cd /home/gbdobserver/PDR_acquire_setup/PDR
+mkdir install_g++-4.8
+cd install_g++-4.8/
+sudo apt update
+wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/g++-4.8_4.8.5-4ubuntu8_amd64.deb 
+wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/libstdc++-4.8-dev_4.8.5-4ubuntu8_amd64.deb 
+wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/gcc-4.8-base_4.8.5-4ubuntu8_amd64.deb 
+wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/gcc-4.8_4.8.5-4ubuntu8_amd64.deb 
+wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/libgcc-4.8-dev_4.8.5-4ubuntu8_amd64.deb 
+wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/cpp-4.8_4.8.5-4ubuntu8_amd64.deb 
+wget http://mirrors.kernel.org/ubuntu/pool/universe/g/gcc-4.8/libasan0_4.8.5-4ubuntu8_amd64.deb  
+# sudo apt install ./gcc-4.8_4.8.5-4ubuntu8_amd64.deb ./gcc-4.8-base_4.8.5-4ubuntu8_amd64.deb ./libstdc++-4.8-dev_4.8.5-4ubuntu8_amd64.deb ./cpp-4.8_4.8.5-4ubuntu8_amd64.deb ./libgcc-4.8-dev_4.8.5-4ubuntu8_amd64.deb ./libasan0_4.8.5-4ubuntu8_amd64.deb ./g++-4.8_4.8.5-4ubuntu8_amd64.deb
+sudo apt install ./*.deb
+
+# Install missing library
+sudo apt install libx11-dev
+sudo apt install universal-ctags
+
+# make directory to keep BIN files
+# The following directory will be used as bin file path in MAKEFILE
+mkdir /home/gbdobserver/bin
+
+# Make Changes in socket makefile 
+# ~/PDR_acquire_setup/PDR/src/socket
+#-std=c++11
+CC = g++-4.8
+CFLAGS =  -g -Wall -std=c++11 -I/usr/include -I/usr/include/libxml2/ -I/usr/include/x86_64-linux-gnu/c++/4.8
+#make it
+make
+
+#remove temp. files
+make clean
+
+#xmllint
+sudo apt-get install -y libxml2-utils libxml2-dev
+sudo updatedb
+
+sudo arp -i eno1 -s 10.0.1.1 00:0a:35:01:8e:31
+
+sudo arp -i eno1 -s RRI-D-636 00:0a:35:01:8e:31
+
+#To set eth0
+#https://askubuntu.com/questions/1317036/how-to-rename-a-network-interface-in-20-04
+
+eno1: 04:7c:16:63:f5:b4
+
+sudo arp -s 10.0.1.1 00:0a:35:01:8e:31
+
+~/bin/mbrsetlocal acquisition off
+~/bin/mbrsetlocal acquisition on
+~/bin/mbrsetlocal timestamp
+~/bin/mbrsetlocal lofreq 59.750
+
+
+sudo ~/bin/first_level_mbr -p A -c 512 -n 1 -a 100 -o junk.spec -i ch00_test_20240618_122833_000.mbr -m 1/xs -u 100
+
+# Renaming to eth0 
+#https://www.baeldung.com/linux/rename-network-interface
+# https://vitux.com/ubuntu-network-configuration/
+sudo ip link set dev eno1 down       # eno1 is the default name in system
+sudo ip link set dev eno1 name eth0
+sudo ip link set dev eth0 up
+sudo ifconfig eth0 10.0.0.1 netmask 255.0.0.0 broadcast 0.0.0.0 
+
+# https://superuser.com/questions/406169/wireshark-byte-order-changes-when-data-exported
+
+# Attunation
+# Attunation step 0.5 dB
+
+This is for H channel
+sudo ~/MPPR/usb_config_prog/set_attn 3 15.5       # HRF
+sudo ~/MPPR/usb_config_prog/set_attn 4 12         # HIF
+
+This is for V channel
+sudo ~/MPPR/usb_config_prog/set_attn 1 14         # VRF
+sudo ~/MPPR/usb_config_prog/set_attn 2 12         # VIF
+
+
